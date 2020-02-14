@@ -31,7 +31,7 @@ float pid;
 float error, prevError;
 float servoSig;
 unsigned long pidTime = 10, prevPIDTime = 0;
-float desiredHeading = 0.0f;
+float desiredHeading = 90.0f;
 
 void setup() {
   SerialUSB.begin(9600);    // Begin USB communication with the computer
@@ -104,9 +104,6 @@ void loop() {
   accelRoll = 0.95*accelRoll + 0.05*((atan2(-aY, aZ)*180.0f)/PI);
   accelPitch = 0.95*accelPitch + 0.05*((atan(aX/sqrt(aY*aY + aZ*aZ))*180.0f)/PI);
 
-  // accelRoll += 0.2f;
-  // accelPitch += 1.1f;
-
   if (gyroSynched) {
     roll = 0.92*(roll + angleX) + 0.08*(accelRoll);
     pitch = 0.92*(pitch + angleY) + 0.08*(accelPitch);
@@ -138,7 +135,7 @@ void loop() {
   float yh = magY*cos(magRoll) + magZ*sin(magRoll);
   float xh = magX*cos(magPitch) + magY*sin(magRoll)*sin(magPitch) - magZ*cos(magRoll)*sin(magPitch);
   
-  float heading = (atan2(yh, xh)*180.0f)/PI;
+  float heading = ((atan2(yh, xh)*180.0f)/PI);
 
   // heading = (xh < 0) ? 180 + heading : (xh > 0 && yh < 0) ? heading : (xh > 0 && yh > 0) ? 360 + heading : (xh == 0 && yh < 0) ? 90 : 270; 
 
