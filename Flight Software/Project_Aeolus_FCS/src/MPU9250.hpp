@@ -221,7 +221,7 @@ namespace Aeolus {
           int16_t gyroSum[3] = { 0, 0, 0 };
           int16_t accelSum[3] = { 0, 0, 0 };
 
-          for (uint8_t i = 0; i < samples; i++) {
+          for (uint16_t i = 0; i < samples; i++) {
             readI2C(MPU_ADDR, GYRO_X_OUT, 3*2, &rawData[0]);
             gyroSum[0] += ((int16_t) rawData[0] << 8 | rawData[1]);
             gyroSum[1] += ((int16_t) rawData[2] << 8 | rawData[3]);
@@ -232,7 +232,7 @@ namespace Aeolus {
           gyroBias[1] = (gyroSum[1] / samples) / 4;
           gyroBias[2] = (gyroSum[2] / samples) / 4;
 
-          for (uint8_t i = 0; i < samples; i++) {
+          for (uint16_t i = 0; i < samples; i++) {
             readI2C(MPU_ADDR, ACCEL_X_OUT, 3*2, &rawData[0]);
             accelSum[0] += ((int16_t) rawData[0] << 8 | rawData[1]);
             accelSum[1] += ((int16_t) rawData[2] << 8 | rawData[3]);
