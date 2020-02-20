@@ -136,7 +136,7 @@ void loop() {
   float xh = magX*cos(magPitch) + magY*sin(magRoll)*sin(magPitch) - magZ*cos(magRoll)*sin(magPitch);
   
   float heading = ((atan2(yh, xh)*180.0f)/PI);
-
+  heading = abs(heading - 90);
   // heading = (xh < 0) ? 180 + heading : (xh > 0 && yh < 0) ? heading : (xh > 0 && yh > 0) ? 360 + heading : (xh == 0 && yh < 0) ? 90 : 270; 
 
   #ifdef DEBUG
