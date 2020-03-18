@@ -66,9 +66,8 @@ namespace Aeolus {
     class MPU9250 {
      private:
         TwoWire& imu;
-        
-        float magCal[3], magBias[3], magBiasScale[3];
-        int16_t gyroBias[3], accelBias[3];
+
+        float magCal[3];
 
         uint8_t accelScale, gyroScale, magScale;
         float accelRes, gyroRes, magRes;
@@ -164,6 +163,9 @@ namespace Aeolus {
           }
         }
      public:
+        float magBias[3], magBiasScale[3];
+        int16_t gyroBias[3], accelBias[3];
+
         int16_t accelBuffer[3];
         int16_t gyroBuffer[3];
         int16_t magBuffer[3];

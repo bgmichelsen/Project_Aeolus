@@ -17,8 +17,6 @@ TwoWire mpu9250(&sercom2, 4, 3);    // Create an instance of I2C on pins 3 and 4
 Aeolus::MPU9250 sensor(mpu9250, Aeolus::ACCEL_SCALE::AFS_2G, Aeolus::GYRO_SCALE::GFS_250DPS, Aeolus::MAG_SCALE::MFS_14BITS);
 
 Servo servo;
-Stepper left_stepper(STEPS, 6, 7, 8, 9);
-Stepper right_stepper(STEPS, 10, 11, 12, 13);
 
 /* Global Variables */
 float magXBias = 270.64, magYBias = -78.60, magZBias = 192.86;
@@ -37,11 +35,11 @@ float accelRoll = 0.0f, accelPitch = 0.0f;
 
 float kp = 1.0f, ki = 0.01f, kd = 0.1f;
 float pTerm, iTerm, dTerm;
-float pid, prevPid;
+float pid;
 float error, prevError;
 float servoSig;
 unsigned long pidTime = 10, prevPIDTime = 0;
-float desiredHeading = 0.0f;
+float desiredHeading = 90.0f;
 
 void setup() {
   SerialUSB.begin(9600);    // Begin USB communication with the computer
@@ -82,8 +80,6 @@ void setup() {
       start += 1000;
     }
   }
-
-  servo.write(180);
 }
 
 void loop() {
@@ -133,7 +129,7 @@ void loop() {
   float xh = magX*cos(magPitch) + magY*sin(magRoll)*sin(magPitch) - magZ*cos(magRoll)*sin(magPitch);
   
   float heading = ((atan2(yh, xh)*180.0f)/PI);
-  heading = heading - 90;
+  heading = abs(heading - 90);
   // heading = (xh < 0) ? 180 + heading : (xh > 0 && yh < 0) ? heading : (xh > 0 && yh > 0) ? 360 + heading : (xh == 0 && yh < 0) ? 90 : 270; 
 
   #ifdef DEBUG
@@ -151,20 +147,13 @@ void loop() {
 
     pid = pTerm + iTerm + dTerm;
 
+    if (pid < -90) pid = -90;
+    if (pid > 90) pid = 90;
     prevError = error;
+    
+    servoSig = 90 - pid;
 
-    if (error > 0) {
-      left_stepper.setSpeed(0);
-      right_stepper.setSpeed(10);
-      right_stepper.step(pid);
-    }
-    else {
-      left_stepper.setSpeed(10);
-      left_stepper.step(-1*pid);
-      right_stepper.setSpeed(0);
-    }
-
-    prevPid = pid;
+    servo.write(servoSig);
 
     #ifdef DEBUG
     SerialUSB.print("PID Value: "); SerialUSB.print(servoSig); SerialUSB.println("");
